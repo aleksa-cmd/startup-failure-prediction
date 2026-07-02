@@ -1,0 +1,38 @@
+[
+  {
+    "model": "XGBoost",
+    "train_accuracy": 0.9878,
+    "test_accuracy": 0.5976,
+    "precision_macro": 0.6049,
+    "recall_macro": 0.5818,
+    "f1_macro": 0.5879,
+    "roc_auc_macro_ovr": 0.7463
+  },
+  {
+    "model": "DecisionTree",
+    "train_accuracy": 0.6697,
+    "test_accuracy": 0.5488,
+    "precision_macro": 0.5717,
+    "recall_macro": 0.5498,
+    "f1_macro": 0.5587,
+    "roc_auc_macro_ovr": 0.745
+  },
+  {
+    "model": "LogisticRegressionCV",
+    "train_accuracy": 0.6147,
+    "test_accuracy": 0.5366,
+    "precision_macro": 0.5693,
+    "recall_macro": 0.53,
+    "f1_macro": 0.5415,
+    "roc_auc_macro_ovr": 0.6957
+  },
+  {
+    "model": "Dummy",
+    "train_accuracy": 0.4037,
+    "test_accuracy": 0.4024,
+    "precision_macro": 0.1341,
+    "recall_macro": 0.3333,
+    "f1_macro": 0.1913,
+    "roc_auc_macro_ovr": 0.5
+  }
+]

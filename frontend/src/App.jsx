@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Predictor from './components/Predictor'
+import Dashboard from './components/Dashboard'
 
 export default function App() {
   const [view, setView] = useState('predictor')
@@ -15,7 +16,7 @@ export default function App() {
         </button>
       </nav>
       {view === 'predictor' && <Predictor />}
-      {view === 'dashboard' && <p>Dashboard coming soon.</p>}
+      {view === 'dashboard' && <Dashboard />}
     </div>
   )
 }

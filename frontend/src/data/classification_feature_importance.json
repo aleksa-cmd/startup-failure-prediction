@@ -1,0 +1,36 @@
+{
+  "xgb_permutation": [
+    {
+      "feature": "raised_musd",
+      "importance": 0.1499
+    },
+    {
+      "feature": "decade_started",
+      "importance": 0.1031
+    },
+    {
+      "feature": "Sector",
+      "importance": 0.0376
+    },
+    {
+      "feature": "big_tech_pressure",
+      "importance": 0.0252
+    },
+    {
+      "feature": "n_flags",
+      "importance": -0.0217
+    },
+    {
+      "feature": "n_flags_sq",
+      "importance": 0.0131
+    },
+    {
+      "feature": "No Budget",
+      "importance": 0.0127
+    },
+    {
+      "feature": "Niche Limits",
+      "importance": 0.0124
+    }
+  ]
+}

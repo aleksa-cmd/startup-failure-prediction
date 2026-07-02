@@ -1,0 +1,70 @@
+{
+  "lasso": [
+    {
+      "feature": "cat__decade_started_2010s_plus",
+      "importance": -2.8014
+    },
+    {
+      "feature": "num__log_raised_musd",
+      "importance": 1.1063
+    },
+    {
+      "feature": "bin__single_cause_failure",
+      "importance": -0.99
+    },
+    {
+      "feature": "cat__decade_started_2000s",
+      "importance": 0.7897
+    },
+    {
+      "feature": "bin__Poor Market Fit",
+      "importance": -0.7016
+    },
+    {
+      "feature": "bin__Giants",
+      "importance": 0.5364
+    },
+    {
+      "feature": "cat__Sector_Manufacturing",
+      "importance": -0.5303
+    },
+    {
+      "feature": "num__n_flags_sq",
+      "importance": -0.4245
+    }
+  ],
+  "xgb_permutation": [
+    {
+      "feature": "decade_started",
+      "importance": 0.4518
+    },
+    {
+      "feature": "raised_musd",
+      "importance": 0.2361
+    },
+    {
+      "feature": "Sector",
+      "importance": 0.0373
+    },
+    {
+      "feature": "Giants",
+      "importance": -0.026
+    },
+    {
+      "feature": "No Budget",
+      "importance": 0.0144
+    },
+    {
+      "feature": "Poor Market Fit",
+      "importance": 0.013
+    },
+    {
+      "feature": "Trend Shifts",
+      "importance": 0.0073
+    },
+    {
+      "feature": "big_tech_pressure",
+      "importance": 0.0051
+    }
+  ]
+}
