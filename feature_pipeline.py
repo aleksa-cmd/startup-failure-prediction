@@ -68,6 +68,25 @@ class FundingFeatureEngineer(BaseEstimator, TransformerMixin):
         return X
 
 
+def derive_engineered_columns(df):
+    """Adds n_flags, n_flags_sq, single_cause_failure, big_tech_pressure, and
+    decade_started to a DataFrame that already has Sector, raised_musd,
+    start_year, and the 9 COMMON_FLAGS columns. Used by both build_dataset()
+    (training, whole-CSV path) and the FastAPI predictor (serving, single-row
+    path) so there is exactly one place this derivation logic lives.
+    """
+    df = df.copy()
+    df["n_flags"] = df[COMMON_FLAGS].sum(axis=1)
+    df["n_flags_sq"] = df["n_flags"] ** 2
+    df["single_cause_failure"] = (df["n_flags"] == 1).astype(int)
+    df["big_tech_pressure"] = ((df["Giants"] == 1) & (df["Competition"] == 1)).astype(int)
+    df["decade_started"] = pd.cut(
+        df["start_year"], bins=[0, 1999, 2009, 2029],
+        labels=["pre_2000", "2000s", "2010s_plus"],
+    ).astype(str)
+    return df
+
+
 def build_dataset(path=DATA_PATH):
     df = pd.read_csv(path)
 
@@ -77,21 +96,10 @@ def build_dataset(path=DATA_PATH):
     # "Corrections to prior work".
     df.loc[df["raised_imputed"] == 1, "raised_musd"] = np.nan
 
-    # Recompute n_flags over just the 9 COMMON_FLAGS. The earlier EDA-step
-    # n_flags summed whichever flags existed per source sector file, which
-    # mixes in the 4 sector-only / 1 food-only flags this pipeline excludes
-    # as predictors -- keep n_flags consistent with the flags actually used.
-    df["n_flags"] = df[COMMON_FLAGS].sum(axis=1)
-    df["n_flags_sq"] = df["n_flags"] ** 2
-    df["single_cause_failure"] = (df["n_flags"] == 1).astype(int)
-    df["big_tech_pressure"] = ((df["Giants"] == 1) & (df["Competition"] == 1)).astype(int)
-
     start_year = df["Years of Operation"].astype(str).str.extract(r"(\d{4})-\d{4}")[0].astype(int)
     df["start_year"] = start_year
-    df["decade_started"] = pd.cut(
-        df["start_year"], bins=[0, 1999, 2009, 2029],
-        labels=["pre_2000", "2000s", "2010s_plus"],
-    ).astype(str)
+
+    df = derive_engineered_columns(df)
 
     # Classification target: quartile bins of the FULL duration_years
     # distribution. This only uses each row's own already-known target value
