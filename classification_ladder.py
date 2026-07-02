@@ -23,7 +23,6 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import KFold, RandomizedSearchCV, validation_curve
-from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
@@ -175,7 +174,8 @@ def main():
     feature_names = logreg_pipeline.named_steps["preprocess"].get_feature_names_out()
     coefs = logreg_pipeline.named_steps["model"].coef_  # shape (n_classes, n_features)
     coef_df = pd.DataFrame(
-        coefs.T, index=feature_names, columns=logreg_pipeline.named_steps["model"].classes_
+        coefs.T, index=feature_names,
+        columns=[CODE_TO_CLASS[c] for c in logreg_pipeline.named_steps["model"].classes_],
     )
     coef_df.to_csv(os.path.join(OUT, "classification_logreg_coefficients.csv"))
     print("\nLogisticRegressionCV coefficients saved to classification_logreg_coefficients.csv")
