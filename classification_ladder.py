@@ -22,7 +22,7 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
-from sklearn.model_selection import KFold, RandomizedSearchCV, validation_curve
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, validation_curve
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
@@ -50,7 +50,7 @@ def find_best_tree_depth(X_train, y_train):
         build_pipeline(DecisionTreeClassifier(random_state=RANDOM_STATE)),
         X_train, y_train,
         param_name="model__max_depth", param_range=depths,
-        cv=KFold(5, shuffle=True, random_state=RANDOM_STATE), scoring="f1_macro",
+        cv=StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE), scoring="f1_macro",
     )
     train_mean, train_std = train_scores.mean(axis=1), train_scores.std(axis=1)
     cv_mean, cv_std = cv_scores.mean(axis=1), cv_scores.std(axis=1)

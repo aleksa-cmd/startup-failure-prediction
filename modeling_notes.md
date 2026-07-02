@@ -39,6 +39,8 @@ DecisionTree reaches f1_macro=0.5850 (roc_auc_macro_ovr=0.7218), a notable impro
 
 LogisticRegressionCV reaches f1_macro=0.5415 (roc_auc_macro_ovr=0.6957), a notable improvement over baseline (+0.3502 f1, +0.1957 AUC). Train-test accuracy gap of 0.0781 indicates low-to-moderate overfitting.
 
+Internally, `duration_class` is encoded as integers (`early=0, typical=1, long_run=2`) for XGBoost compatibility, applied consistently across all four models — every metric and plot in this section is reported using the class names, not the codes.
+
 See `modeling_output/classification_confusion_matrices.png` and
 `modeling_output/classification_tree_validation_curve.png`.
 
