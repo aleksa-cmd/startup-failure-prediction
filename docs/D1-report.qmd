@@ -1,0 +1,190 @@
+---
+title: "Startup Failure Analysis"
+subtitle: "Reproducible Phase-2 report: predicting how long startups survive, and why"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Show code"
+    embed-resources: true
+    theme: cosmo
+execute:
+  echo: true
+  warning: false
+jupyter: python3
+---
+
+## Introduction
+
+This report analyzes ~400 real startups that failed, asking two questions:
+
+1. **How many years** does a startup typically survive before failing?
+2. Is a given failure **early** (under 5 years), **typical** (5–10 years), or a **long, slow decline** (over 10 years) — and can we tell in advance?
+
+Every number and chart below is computed live when this document renders — nothing is pasted in from a prior run. The same random seed (`RANDOM_STATE = 42`) is used everywhere a model or split needs one, so re-rendering this document reproduces identical results.
+
+```{python}
+#| echo: true
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path("..").resolve()
+sys.path.insert(0, str(PROJECT_ROOT))
+
+import pandas as pd
+from IPython.display import Image, display
+
+pd.set_option("display.max_columns", None)
+```
+
+## The Data
+
+```{python}
+#| echo: true
+from feature_pipeline import build_dataset, RANDOM_STATE, COMMON_FLAGS
+
+df = build_dataset()
+print(f"Rows: {len(df)}")
+print(f"Random seed used throughout: {RANDOM_STATE}")
+df[["Name", "Sector", "duration_years", "raised_musd", "duration_class"]].head()
+```
+
+```{python}
+#| label: fig-sector-duration
+#| fig-cap: "Startups per sector, and how long they lasted before failing"
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+
+df["Sector"].value_counts().plot(kind="barh", ax=axes[0], color="steelblue")
+axes[0].set_title("Companies per sector")
+axes[0].set_xlabel("count")
+
+df["duration_years"].plot(kind="hist", bins=18, ax=axes[1], color="darkorange")
+axes[1].set_title("Years of operation before failing")
+axes[1].set_xlabel("years")
+
+plt.tight_layout()
+plt.show()
+```
+
+The dataset spans 6 sectors (Information is the largest, Food/services the smallest at only 26 rows) and 9 tagged failure reasons (`{python} ", ".join(COMMON_FLAGS)`). Duration is right-skewed: most startups fail within 5–10 years, with a long tail out to 18 years.
+
+### Data quality, honestly
+
+The raw data has real quirks that shape every decision below (full detail in `data_notes.md`):
+
+- **Two different date formats** across source files (`"YYYY-YYYY"` vs. `"N (YYYY-YYYY)"`) — resolved by always computing duration as `end_year − start_year`.
+- **`How Much They Raised` is dirty in 5–17% of rows** per sector — estimates, parenthetical acquirer amounts, compound figures. The leading `$<number>` is extracted; ambiguous rows are flagged, not silently trusted.
+- **The failure-reason flags are hindsight labels** — assigned after each company's fate was already known. This matters a lot for what this model can and can't be used for (see [Business interpretation](#business-interpretation-and-recommendations)).
+- **The "master" list of 815 startups is not a superset of the 6 enriched sector files** — for Health Care and Manufacturing specifically, most enriched rows don't even appear in the master list. The two are treated as independently compiled, not joined.
+
+## A Leakage-Safe Feature Pipeline
+
+Every model below shares one `scikit-learn` `Pipeline`, so preprocessing (imputation, scaling, one-hot encoding) is always fit on the training split only — never on data the model will later be scored on.
+
+```{python}
+#| echo: true
+from feature_pipeline import build_pipeline, FundingFeatureEngineer
+
+print(FundingFeatureEngineer.__doc__)
+```
+
+The one exception is intentional and explained in the docstring above: sector-median funding statistics are fit fresh on whatever split is passed to `.fit()` — so during evaluation they see only the training rows, and during final model export (used by the live app) they see the full dataset, on purpose, since a deployed model should use every bit of available signal.
+
+## Regression Ladder: How Many Years Will It Survive?
+
+Four models, from a naive guess up to a tuned gradient-boosted tree, all scored on the same held-out 20% test split.
+
+```{python}
+#| echo: true
+#| output: true
+import regression_ladder
+
+regression_ladder.main()
+```
+
+```{python}
+#| label: fig-regression-charts
+#| fig-cap: "Left: validation curve showing the Decision Tree overfitting past depth 2. Right: predicted vs. actual duration for all four models on the test set."
+display(Image(filename=str(PROJECT_ROOT / "modeling_output" / "regression_tree_validation_curve.png")))
+display(Image(filename=str(PROJECT_ROOT / "modeling_output" / "regression_predicted_vs_actual.png")))
+```
+
+```{python}
+#| echo: true
+pd.read_csv(PROJECT_ROOT / "modeling_output" / "regression_leaderboard.csv")
+```
+
+## Classification Ladder: Early, Typical, or Long-Run?
+
+Same idea, predicting the 3-class bucket instead of an exact number of years.
+
+```{python}
+#| echo: true
+#| output: true
+import classification_ladder
+
+classification_ladder.main()
+```
+
+```{python}
+#| label: fig-classification-charts
+#| fig-cap: "Left: validation curve for the Decision Tree classifier. Right: confusion matrices for all four models on the test set."
+display(Image(filename=str(PROJECT_ROOT / "modeling_output" / "classification_tree_validation_curve.png")))
+display(Image(filename=str(PROJECT_ROOT / "modeling_output" / "classification_confusion_matrices.png")))
+```
+
+```{python}
+#| echo: true
+pd.read_csv(PROJECT_ROOT / "modeling_output" / "classification_leaderboard.csv")
+```
+
+## Honest Evaluation
+
+**XGBoost does not clearly beat the simpler models here.** On the regression task, the Decision Tree's test R² (0.377) actually edges out XGBoost's (0.366) outright, while overfitting roughly a tenth as much (a train–test R² gap of 0.032 vs. 0.341) — XGBoost memorizes the training split (train R²=0.707) without that translating into better held-out performance.
+
+On the classification task, XGBoost does post the best test-set numbers (F1=0.588 vs. the Tree's 0.559), but that edge comes with about 3.2× the overfitting risk (a 0.390 train–test accuracy gap vs. the Tree's 0.121), and the two are essentially tied on ROC-AUC (0.746 vs 0.745).
+
+**Recommendation:** use the **Decision Tree** for both tasks. It matches or beats XGBoost on real, held-out performance, is dramatically more stable, and — unlike a gradient-boosted ensemble — a non-technical reader can actually follow its logic. This is the model the live predictor app is built on.
+
+## Which Features Matter
+
+```{python}
+#| echo: true
+print("Regression -- Lasso coefficients (top 8 by magnitude):")
+display(pd.read_csv(PROJECT_ROOT / "modeling_output" / "regression_lasso_coefficients.csv").head(8))
+
+print("\nRegression -- XGBoost permutation importance (top 8):")
+display(pd.read_csv(PROJECT_ROOT / "modeling_output" / "regression_xgb_permutation_importance.csv").head(8))
+```
+
+```{python}
+#| echo: true
+print("Classification -- XGBoost permutation importance (top 8):")
+pd.read_csv(PROJECT_ROOT / "modeling_output" / "classification_xgb_permutation_importance.csv").head(8)
+```
+
+Across **both** tasks and **both** the linear and tree-based models, two features consistently dominate: **how much a company raised**, and **when it was founded** — companies founded in the 2010s and later, and those that raised less, tend to show shorter observed durations. This matters more than any single failure reason cited. Among the reason flags, only `No Budget`, `Poor Market Fit`, and `Big Tech pressure` show up as important in *both* model types — the others (like `single_cause_failure` and `Giants`) carry large coefficients in the linear models but wash out under the tree model's permutation test, suggesting they're collinear with funding/founding-era rather than independent signal.
+
+## Business Interpretation and Recommendations
+
+**What these results mean:** this model explains variation in *observed* duration among startups that already failed. It is **not** a forecast of how long a currently-operating company will last — the failure-reason flags it's trained on are hindsight labels, only knowable after the outcome was already determined. Repositioning it as a forward-looking survival predictor would misrepresent what it was trained on.
+
+**What we would not trust this model to do:**
+
+1. Predict the remaining runway of an active, non-failed company.
+2. Generalize to sectors thin on data — Food/services has only 26 rows total.
+3. Extrapolate past the observed funding range (the largest raise in this dataset is $3.5B).
+4. Support causal claims — "Poor Market Fit *causes* shorter duration" is not established; only that companies labeled this way tended to have shorter observed duration in this sample.
+
+## Try It Yourself
+
+The Decision Tree models trained here are deployed behind a live web app — enter a hypothetical startup's details and get a real-time prediction, or browse the same leaderboard shown above:
+
+**<https://startup-failure-prediction.vercel.app>**
+
+See the repository [README](../README.md) for how to reproduce this report and the rest of the project locally.
