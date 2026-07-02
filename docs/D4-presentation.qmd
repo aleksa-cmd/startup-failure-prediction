@@ -1,0 +1,89 @@
+---
+title: "Why Do Startups Fail — And How Long Do They Last?"
+subtitle: "A data-driven look at ~400 real startup failures"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+---
+
+## The Question
+
+Looking at nearly 400 real startups that failed:
+
+- Can we predict **how long** a company will last before failing?
+- Can we tell, in advance, whether it's headed for an **early collapse** or a **long, slow decline**?
+- What actually **drives** the difference?
+
+## The Data
+
+For each failed startup, we know:
+
+- How much money it raised
+- What industry it's in
+- What year it was founded
+- Which of **9 common failure reasons** applied (competition, ran out of budget, poor market fit, and more)
+
+## Our Approach
+
+We didn't just build one model — we built a **ladder**, from simple to complex, for two questions:
+
+1. **How many years** did the company survive?
+2. Was its failure **early, typical, or a long, slow decline**?
+
+At every step: always compare against a "just guess the average" baseline, and always check on data the model never saw during training.
+
+## Finding 1: The Simple Model Won
+
+::: {.incremental}
+- We tried a sophisticated model (gradient boosting) against a simple, rule-based one (a decision tree).
+- The sophisticated model looked better on the data it was trained on — but that was memorization, not real skill.
+- On new, unseen data, the **simple model matched or beat it**.
+:::
+
+. . .
+
+**Takeaway:** more complexity isn't automatically better — and the simple model is far easier to explain and trust.
+
+## Finding 2: What Actually Matters
+
+Two things predicted outcomes more than anything else:
+
+::: {.incremental}
+- **How much money was raised**
+- **When the company was founded** — the era it was born into
+:::
+
+. . .
+
+Surprisingly, these mattered *more* than any specific reason cited for failure — competition, budget, market fit, and the rest all played a smaller role.
+
+## Finding 3: Timing Is a Closer Call
+
+Predicting *early vs. typical vs. long-run* failure was harder than predicting the exact number of years.
+
+- The more complex model had a real, if modest, edge in raw accuracy here.
+- But it was also far more prone to overfitting than the simple model.
+- **Verdict:** a genuine trade-off between accuracy and reliability, not a clean win either way.
+
+## The Live Tool
+
+We built a small web app so this isn't just a static report:
+
+- **Predictor** — enter a hypothetical startup's details, get a live prediction
+- **Dashboard** — see how the models actually compared, and which features mattered
+
+*(live demo)*
+
+## Recommendations
+
+::: {.incremental}
+1. **Use the simple model**, not the complex one — same accuracy, far easier to trust and explain.
+2. **Treat this as a pattern-finder, not a fortune teller** — it explains already-failed startups, and shouldn't be used to forecast a company that's still running.
+3. **Don't crown a single villain** — funding and timing explain more than any one "reason" for failure.
+:::
+
+## Questions?
+
+Thank you.
