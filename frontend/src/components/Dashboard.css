@@ -1,0 +1,164 @@
+.stat-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.headline-card {
+  background: var(--accent);
+  color: #fff;
+  padding: 22px 24px;
+}
+
+.panel-eyebrow-dark {
+  color: #fff;
+  opacity: .75;
+  margin-bottom: 8px;
+}
+
+.headline-text {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.stat-card {
+  padding: 22px 24px;
+}
+
+.stat-number {
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.stat-caption {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.leaderboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.leaderboard-card,
+.feature-card {
+  padding: 24px 26px;
+}
+
+.leaderboard-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.leaderboard-caption {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.leaderboard-rows,
+.feature-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 38px;
+  gap: 10px;
+  align-items: center;
+}
+
+.feature-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 80px;
+  gap: 12px;
+  align-items: center;
+}
+
+.bar-track {
+  height: 13px;
+  background: var(--track);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.leaderboard-value {
+  text-align: right;
+}
+
+.feature-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.feature-label-strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.feature-annotation {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.feature-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.feature-toggle {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.toggle-pill {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.toggle-pill.active {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+  border-color: var(--ink);
+}
+
+.feature-footnote {
+  font-size: 12.5px;
+  color: #6d6a63;
+  line-height: 1.5;
+  margin-top: 16px;
+  border-top: 1px solid var(--track);
+  padding-top: 12px;
+}
+
+.feature-footnote strong {
+  color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .stat-row,
+  .leaderboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
