@@ -12,7 +12,7 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 from feature_pipeline import FEATURE_COLUMNS, RANDOM_STATE, build_dataset, build_pipeline
 
-FOLDER = r"C:\Users\aleks\Desktop\Master - IMB\3. semestar\MA DA\startup failure"
+FOLDER = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(FOLDER, "api", "models")
 os.makedirs(OUT, exist_ok=True)
 

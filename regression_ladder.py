@@ -19,7 +19,7 @@ from xgboost import XGBRegressor
 
 from feature_pipeline import FEATURE_COLUMNS, RANDOM_STATE, build_dataset, build_pipeline, make_split
 
-FOLDER = r"C:\Users\aleks\Desktop\Master - IMB\3. semestar\MA DA\startup failure"
+FOLDER = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(FOLDER, "modeling_output")
 os.makedirs(OUT, exist_ok=True)
 

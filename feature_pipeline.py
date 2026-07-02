@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-FOLDER = r"C:\Users\aleks\Desktop\Master - IMB\3. semestar\MA DA\startup failure"
+FOLDER = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(FOLDER, "eda_output", "combined_clean.csv")
 
 RANDOM_STATE = 42

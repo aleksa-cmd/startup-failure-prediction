@@ -8,7 +8,7 @@ import os
 
 import pandas as pd
 
-FOLDER = r"C:\Users\aleks\Desktop\Master - IMB\3. semestar\MA DA\startup failure"
+FOLDER = os.path.dirname(os.path.abspath(__file__))
 MODELING_OUTPUT = os.path.join(FOLDER, "modeling_output")
 OUT = os.path.join(FOLDER, "frontend", "src", "data")
 os.makedirs(OUT, exist_ok=True)
