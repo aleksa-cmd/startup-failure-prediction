@@ -1,0 +1,26 @@
+,0
+cat__decade_started_2010s_plus,-2.801364610614472
+num__log_raised_musd,1.106342983800696
+bin__single_cause_failure,-0.9899507280339878
+cat__decade_started_2000s,0.7896746983326546
+bin__Poor Market Fit,-0.7015752902160869
+bin__Giants,0.5363615700247198
+cat__Sector_Manufacturing,-0.5302592938753288
+num__n_flags_sq,-0.42452389371352106
+bin__big_tech_pressure,0.3087103574054061
+bin__No Budget,-0.24886448911770714
+num__relative_funding_ratio,-0.1739467723138833
+cat__Sector_Information,0.1328868178258551
+bin__Acquisition Stagnation,0.09251404555721383
+bin__Trend Shifts,-0.09240334380279841
+bin__Niche Limits,0.08986543894323729
+bin__Execution Flaws,-0.01932209171946164
+num__n_flags,-0.0
+bin__Competition,0.0
+num__log_raised_musd_sq,-0.0
+cat__Sector_Accommodation and Food Services,-0.0
+bin__Monetization Failure,0.0
+cat__Sector_Finance and Insurance,-0.0
+cat__Sector_Health Care,0.0
+cat__Sector_Retail Trade,0.0
+cat__decade_started_pre_2000,0.0
