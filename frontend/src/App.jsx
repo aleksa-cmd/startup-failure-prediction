@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './App.css'
 import Header from './components/Header'
 import Predictor from './components/Predictor'
 import Dashboard from './components/Dashboard'

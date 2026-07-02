@@ -111,6 +111,9 @@
   margin-top: 4px;
   appearance: none;
   -webkit-appearance: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .basic-field input:focus,
