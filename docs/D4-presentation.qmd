@@ -6,6 +6,8 @@ format:
     theme: simple
     slide-number: true
     transition: fade
+  pptx:
+    slide-level: 2
 ---
 
 ## The Question
