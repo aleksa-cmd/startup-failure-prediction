@@ -27,7 +27,7 @@ See `modeling_output/regression_predicted_vs_actual.png` and
 | model | train_accuracy | test_accuracy | precision_macro | recall_macro | f1_macro | roc_auc_macro_ovr |
 |---|---|---|---|---|---|---|
 | XGBoost | 0.9878 | 0.5976 | 0.6049 | 0.5818 | 0.5879 | 0.7463 |
-| DecisionTree | 0.6055 | 0.5854 | 0.6258 | 0.5781 | 0.5850 | 0.7218 |
+| DecisionTree | 0.6697 | 0.5488 | 0.5717 | 0.5498 | 0.5587 | 0.7450 |
 | LogisticRegressionCV | 0.6147 | 0.5366 | 0.5693 | 0.5300 | 0.5415 | 0.6957 |
 | Dummy | 0.4037 | 0.4024 | 0.1341 | 0.3333 | 0.1913 | 0.5000 |
 
@@ -35,7 +35,7 @@ Baseline: DummyClassifier(strategy="most_frequent"), f1_macro=0.1913, roc_auc_ma
 
 XGBoost reaches f1_macro=0.5879 (roc_auc_macro_ovr=0.7463), a notable improvement over baseline (+0.3966 f1, +0.2463 AUC). Train-test accuracy gap of 0.3902 (98.8% train vs 59.8% test) indicates high overfitting.
 
-DecisionTree reaches f1_macro=0.5850 (roc_auc_macro_ovr=0.7218), a notable improvement over baseline (+0.3937 f1, +0.2218 AUC), nearly matching XGBoost. Train-test accuracy gap of 0.0201 indicates low overfitting.
+DecisionTree reaches f1_macro=0.5587 (roc_auc_macro_ovr=0.7450), a notable improvement over baseline (+0.3674 f1, +0.2450 AUC). Its f1 is now meaningfully below XGBoost's (0.5587 vs 0.5879, a ~0.029 gap), though its AUC is essentially tied with XGBoost's (0.7450 vs 0.7463). Train-test accuracy gap of 0.1209 (66.97% train vs 54.88% test) indicates low-to-moderate overfitting.
 
 LogisticRegressionCV reaches f1_macro=0.5415 (roc_auc_macro_ovr=0.6957), a notable improvement over baseline (+0.3502 f1, +0.1957 AUC). Train-test accuracy gap of 0.0781 indicates low-to-moderate overfitting.
 
@@ -56,7 +56,7 @@ Disagreement mirrors the regression case: `single_cause_failure` has the third-l
 
 ## Honest evaluation summary
 
-XGBoost does not clearly beat the simpler models on this data, and in the regression track it actually loses on the metric that matters: DecisionTree's test R2 (0.3774) edges out XGBoost's (0.3661) outright, while DecisionTree's train-test gap (0.0324) is roughly a tenth of XGBoost's (0.3411) — XGBoost memorizes the 327-row training split (train R2=0.707) without that showing up as better held-out performance. In the classification track XGBoost does post the best test-set numbers (f1_macro=0.5879, roc_auc_macro_ovr=0.7463), but the margin over DecisionTree is tiny (+0.003 f1, +0.025 AUC) and bought at the cost of extreme overfitting (train accuracy 98.8% vs test accuracy 59.8%, a 0.390 gap) versus DecisionTree's near-zero gap (0.0201, 60.6% train vs 58.5% test). At n=409 (327 train / 82 test), a 0.003 f1 edge from a model whose train accuracy is 40 points higher than its test accuracy is not strong evidence of a real advantage — it is consistent with XGBoost fitting noise in the training split that happened not to hurt this particular 82-row test set. Given the train-test gaps observed, we would actually recommend **DecisionTree** for both tracks: it matches or beats XGBoost on held-out performance in both cases while being dramatically more stable (low variance between train and test) and easier to inspect and explain to a non-technical audience.
+XGBoost does not clearly beat the simpler models on this data, and in the regression track it actually loses on the metric that matters: DecisionTree's test R2 (0.3774) edges out XGBoost's (0.3661) outright, while DecisionTree's train-test gap (0.0324) is roughly a tenth of XGBoost's (0.3411) — XGBoost memorizes the 327-row training split (train R2=0.707) without that showing up as better held-out performance. In the classification track XGBoost does post the best test-set numbers (f1_macro=0.5879, roc_auc_macro_ovr=0.7463), and here the margin over DecisionTree (f1_macro=0.5587, roc_auc_macro_ovr=0.7450) is real on f1 (+0.0292) but essentially tied on AUC (+0.0013) — bought at the cost of substantially more overfitting (train accuracy 98.8% vs test accuracy 59.8%, a 0.3902 gap) versus DecisionTree's gap of 0.1209 (66.97% train vs 54.88% test), roughly a 3.2x difference (0.3902 vs 0.1209) rather than negligible. At n=409 (327 train / 82 test), a +0.029 f1 edge from a model whose train accuracy is 40 points higher than its test accuracy is a modest but real advantage, not the noise-level edge it once appeared to be — though it still comes with meaningfully more overfitting risk than DecisionTree. Given the regression-track numbers, we still recommend **DecisionTree** for the regression track: it matches or beats XGBoost on held-out performance while being dramatically more stable (low variance between train and test) and easier to inspect and explain to a non-technical audience. For the classification track the recommendation is a closer call: XGBoost's f1 edge (+0.029) is real, and its AUC is essentially identical to DecisionTree's, but it carries roughly 3.2x DecisionTree's train-test overfitting gap and is far harder to explain to a non-technical audience. For a business audience prioritizing stability and interpretability, DecisionTree remains the more defensible choice; a team optimizing purely for held-out f1 would have legitimate grounds to prefer XGBoost instead.
 
 ## Business interpretation
 
