@@ -1,0 +1,18 @@
+# Pinned to the exact versions used to produce every result in this project
+# (EDA, feature pipeline, model ladders, model export, and local API
+# development). For the Vercel-deployed Python function specifically, see
+# api/requirements.txt (a minimal subset scoped to what that serverless
+# function needs).
+pandas==3.0.3
+pyarrow==24.0.0  # transitive: pandas 3.0's default string dtype backend; pickled models won't unpickle without it (see api/requirements.txt)
+numpy==2.5.0
+scikit-learn==1.9.0
+xgboost==3.3.0
+matplotlib==3.11.0
+seaborn==0.13.2
+scipy==1.18.0
+joblib==1.5.3
+fastapi==0.139.0
+uvicorn==0.49.0
+httpx==0.28.1
+pydantic==2.13.4
