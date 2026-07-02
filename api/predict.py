@@ -58,7 +58,7 @@ FLAG_FIELD_TO_COLUMN = {
 class PredictRequest(BaseModel):
     raised_musd: float = Field(..., ge=0, description="Amount raised, in millions USD")
     sector: Sector
-    start_year: int = Field(..., ge=1900, le=2030)
+    start_year: int = Field(..., ge=1900, le=2029)
     giants: bool
     no_budget: bool
     competition: bool
